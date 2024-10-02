@@ -1,60 +1,65 @@
 using OnlineStore.Models;
 using OnlineStore.DTOs.Item.CriarItem;
 using AutoMapper;
+using OnlineStore.DTOs.Item.AtualizarItem;
+using OnlineStore.Repositories;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using FireSharp;
-using FireSharp.Interfaces;
-using FireSharp.Config;
-using FireSharp.Response;
 
-namespace OnlineStore.Services;
-
-public class ItemService
+namespace OnlineStore.Services
 {
-    private readonly IMapper _mapper;
-    private readonly IFirebaseClient _firebaseClient;
-
-    public ItemService(IMapper mapper, IFirebaseClient firebaseClient)
+    public class ItemService
     {
-        _mapper = mapper;
-        _firebaseClient = firebaseClient;
-    }
+        private readonly IMapper _mapper;
+        private readonly IItemRepository _itemRepository;
 
-    public async Task<CriarItemOutput> AddItemAsync(CriarItemInput input)
-    {
-        try
+        public ItemService(IMapper mapper, IItemRepository itemRepository)
         {
-            Item newItem = _mapper.Map<Item>(input);
-            string itemId = newItem.Id.ToString();
-
-            FirebaseResponse response = await _firebaseClient.SetAsync($"Items/{itemId}", newItem);
-
-            CriarItemOutput output = _mapper.Map<CriarItemOutput>(newItem);
-            output.Sucesso = response.StatusCode == System.Net.HttpStatusCode.OK;
-            output.MensagemErro = output.Sucesso ? null : "Erro ao adicionar item.";
-            return output;
+            _mapper = mapper;
+            _itemRepository = itemRepository;
         }
-        catch (Exception ex)
-        {
-            return new CriarItemOutput { Sucesso = false, MensagemErro = $"Erro ao adicionar item: {ex.Message}" };
-        }
-    }
 
-    public async Task<CriarItemOutput> GetItemByIdAsync(string id)
-    {
-        try
+        public async Task<List<Item>> GetItemsAsync()
         {
-            FirebaseResponse response = await _firebaseClient.GetAsync($"Items/{id}");
-            if (response.StatusCode == System.Net.HttpStatusCode.OK && response.Body != "null")
+            return await _itemRepository.GetItemsAsync();
+        }
+
+        public async Task<Item> GetItemByIdAsync(string id)
+        {
+            return await _itemRepository.GetItemByIdAsync(id);
+        }
+
+        public async Task<CriarItemOutput> AddItemAsync(CriarItemInput input)
+        {
+            var item = _mapper.Map<Item>(input);
+            try
             {
-                Item item = response.ResultAs<Item>();
-                return _mapper.Map<CriarItemOutput>(item);
+                string id = await _itemRepository.AddItemAsync(item);
+                item.Id = id;
+
+                var output = _mapper.Map<CriarItemOutput>(item);
+                output.Sucesso = true;
+                return output;
             }
-            return null;
+            catch (Exception ex)
+            {
+                return new CriarItemOutput
+                {
+                    Sucesso = false,
+                    MensagemErro = ex.Message
+                };
+            }
         }
-        catch (Exception ex)
+
+        public async Task<bool> UpdateItemAsync(string id, AtualizarItemInput input)
         {
-            return new CriarItemOutput { Sucesso = false, MensagemErro = $"Erro ao buscar item: {ex.Message}" };
+            var updatedItem = _mapper.Map<Item>(input);
+            return await _itemRepository.UpdateItemAsync(id, updatedItem);
+        }
+
+        public async Task<bool> DeleteItemAsync(string id)
+        {
+            return await _itemRepository.DeleteItemAsync(id);
         }
     }
 }

@@ -1,4 +1,5 @@
 using AutoMapper;
+using OnlineStore.DTOs.Item.AtualizarItem;
 using OnlineStore.DTOs.Item.CriarItem;
 using OnlineStore.Models;
 
@@ -8,11 +9,13 @@ public class ItemProfile : Profile
 {
     public ItemProfile()
     {
-        // Mapeia de CriarItemInput para Item
         CreateMap<CriarItemInput, Item>()
             .ForMember(dest => dest.Id, opt => opt.Ignore());  // O Id é gerado automaticamente no modelo
 
         // Mapeia de Item para CriarItemOutput
         CreateMap<Item, CriarItemOutput>();
+
+        CreateMap<AtualizarItemInput, Item>()
+               .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
     }
 }

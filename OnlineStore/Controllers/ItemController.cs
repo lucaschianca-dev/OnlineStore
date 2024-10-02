@@ -1,22 +1,51 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OnlineStore.DTOs.Item.AtualizarItem;
 using OnlineStore.DTOs.Item.CriarItem;
+using OnlineStore.Models;
 using OnlineStore.Services;
-using System.Threading.Tasks;
 
 namespace OnlineStore.Controllers;
-    
+
 [ApiController]
 [Route("api/[controller]")]
-public class ItemsController : ControllerBase
+public class ItemController : ControllerBase
 {
     private readonly ItemService _itemService;
 
-    public ItemsController(ItemService itemService)
+    public ItemController(ItemService itemService)
     {
         _itemService = itemService;
     }
 
-    // POST: api/Items
+    [HttpGet]
+    public async Task<IActionResult> GetItems()
+    {
+        try
+        {
+            var items = await _itemService.GetItemsAsync();
+            return Ok(items);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Erro ao recuperar itens: {ex.Message}");
+        }
+    }
+
+    [Authorize]
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetItemsById(string id)
+    {
+        var item = await _itemService.GetItemByIdAsync(id);
+
+        if (item == null)
+        {
+            return NotFound(new { message = "Item não encontrado" });
+        }
+        return Ok(item);
+    }
+
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> AddItem([FromBody] CriarItemInput input)
     {
@@ -25,27 +54,51 @@ public class ItemsController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        CriarItemOutput output = await _itemService.AddItemAsync(input);
-        if (output.Sucesso)
+        try
         {
-            return CreatedAtAction(nameof(GetItemById), new { id = output.Id }, output);
+            var result = await _itemService.AddItemAsync(input);
+
+            if (result.Sucesso)
+            {
+                return CreatedAtAction(nameof(GetItems), new { id = result.Id }, result);
+            }
+            else
+            {
+                return BadRequest(result.MensagemErro);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            return BadRequest(output);
+            return StatusCode(500, $"Erro ao adicionar item: {ex.Message}");
         }
     }
 
-    // GET: api/Items/{id}
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetItemById(string id)
+    [Authorize]
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> UpdateItemPartially(string id, [FromBody] AtualizarItemInput input)
     {
-        var output = await _itemService.GetItemByIdAsync(id);
-        if (output != null)
+        var result = await _itemService.UpdateItemAsync(id, input);
+
+        if (result)
         {
-            return Ok(output);
+            return Ok(new { message = "Item atualizado com sucesso" });
         }
 
-        return NotFound($"Item with ID {id} not found.");
+        return NotFound(new { message = "Item não encontrado" });
+    }
+
+    [Authorize]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteItem(string id)
+    {
+        var result = await _itemService.DeleteItemAsync(id);
+
+        if (result)
+        {
+            return Ok(new { message = "Item deletado com sucesso" });
+        }
+
+        return NotFound(new { message = "Item não encontrado" });
     }
 }
+
