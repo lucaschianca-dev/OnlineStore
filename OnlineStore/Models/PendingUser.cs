@@ -20,5 +20,8 @@ public class PendingUser
     [FirestoreProperty]
     public string Password { get; set; }
 
+    [FirestoreProperty]
+    public DateTime CreationDate { get; set; } = DateTime.UtcNow;
+
     public PendingUser() { }
 }

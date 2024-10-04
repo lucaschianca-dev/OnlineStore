@@ -17,6 +17,9 @@ namespace OnlineStore.Models
         [FirestoreProperty]
         public string Role { get; set; }
 
+        [FirestoreProperty]
+        public DateTime CreationDate { get; set; } = DateTime.UtcNow;
+
         public User(){}
     }
 }
