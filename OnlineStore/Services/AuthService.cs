@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using FirebaseAdmin.Auth;
-using OnlineStore.DTOs.User;
+using Newtonsoft.Json;
 using OnlineStore.DTOs.User.RegisterUserInput;
 using OnlineStore.Models;
 using OnlineStore.Repositories;
-using System;
-using System.Threading.Tasks;
+using OnlineStore.Repositories.PendingUserRepository;
+using System.Text;
 
 namespace OnlineStore.Services
 {
@@ -13,47 +13,101 @@ namespace OnlineStore.Services
     {
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
+        private readonly IPendingUserRepository _pendingUserRepository;
+        private readonly SendEmailService _sendEmailService;
+        private readonly HttpClient _httpClient;
 
-        public AuthService(IMapper mapper, IUserRepository userRepository)
+        // Insira sua API key do Firebase aqui (ou carregue-a de uma configuração)
+        private const string FirebaseApiKey = "AIzaSyD_ULUGuEN_FO2gkhtEf5KSMrBggNXQZ5E";
+
+        public AuthService(IMapper mapper, IUserRepository userRepository,IPendingUserRepository pendingUserRepository, HttpClient httpClient, SendEmailService sendEmailService)
         {
             _mapper = mapper;
             _userRepository = userRepository;
+            _pendingUserRepository = pendingUserRepository;
+            _httpClient = httpClient;
+            _sendEmailService = sendEmailService;
         }
 
         public async Task<string> RegisterAsync(RegisterUserInput input)
         {
             try
             {
-                var userRecordArgs = new UserRecordArgs()
-                {
-                    Email = input.Email,
-                    Password = input.Password
-                };
-                var userRecord = await FirebaseAuth.DefaultInstance.CreateUserAsync(userRecordArgs);
+                // Criar um PendingUser a partir do RegisterUserInput usando o AutoMapper
+                var pendingUser = _mapper.Map<PendingUser>(input);
 
-                var newUser = _mapper.Map<User>(input);
-                newUser.Id = userRecord.Uid;
+                // Gerar um ID para o PendingUser (pode ser um GUID ou outro identificador)
+                pendingUser.Id = Guid.NewGuid().ToString();
 
-                await _userRepository.AddUserAsync(newUser);
+                // Enviar email de verificação (sem criar o usuário no Firebase)
+                await _sendEmailService.SendEmailVerificationAsync(pendingUser);
 
-                return userRecord.Uid;
+                // Armazenar o usuário na coleção PendingUsers
+                await _pendingUserRepository.AddPendingUserAsync(pendingUser);
+
+                return pendingUser.Id;
             }
-            catch (FirebaseAuthException ex)
+            catch (Exception ex)
             {
                 throw new Exception($"Erro ao registrar: {ex.Message}");
             }
         }
 
-        public async Task<User> LoginAsync(string email, string password)
+        public async Task VerifyEmailAsync(string uid)
         {
-            var userRecord = await FirebaseAuth.DefaultInstance.GetUserByEmailAsync(email);
-            var user = await _userRepository.GetUserByIdAsync(userRecord.Uid);
-            if (user == null)
+            // Recupera o usuário pendente pela coleção PendingUsers
+            var pendingUser = await _pendingUserRepository.GetPendingUserByIdAsync(uid);
+            if (pendingUser == null)
             {
-                throw new Exception("Usuário não encontrado no banco de dados.");
+                throw new Exception("Usuário pendente não encontrado.");
             }
 
-            return user;
+            // Criar o usuário no Firebase Authentication após a verificação do e-mail
+            var userRecordArgs = new UserRecordArgs()
+            {
+                Email = pendingUser.Email,
+                Password = pendingUser.Password, // Usar a senha do PendingUser
+                DisplayName = pendingUser.FullName
+            };
+            var userRecord = await FirebaseAuth.DefaultInstance.CreateUserAsync(userRecordArgs);
+
+            // Mapeia o PendingUser para User usando AutoMapper
+            var newUser = _mapper.Map<User>(pendingUser);
+            newUser.Id = userRecord.Uid;  // Define o ID do usuário como UID do Firebase
+
+            // Persistir o usuário na coleção Users e remover da coleção PendingUsers
+            await _userRepository.AddUserAsync(newUser);
+
+            // Aqui, a exclusão está sendo feita pelo Id do PendingUser, que é o documento em Firestore
+            await _pendingUserRepository.DeletePendingUserAsync(pendingUser.Id); // Remove da coleção PendingUsers
+        }
+
+        public async Task<string> LoginAsync(string email, string password)
+        {
+            var requestBody = new
+            {
+                email = email,
+                password = password,
+                returnSecureToken = true
+            };
+
+            var content = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json");
+
+            // Faz uma requisição para o endpoint de login do Firebase Authentication
+            var response = await _httpClient.PostAsync($"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={FirebaseApiKey}", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseData = await response.Content.ReadAsStringAsync();
+                dynamic jsonResponse = JsonConvert.DeserializeObject(responseData);
+
+                // Retorna o token JWT para uso
+                return jsonResponse.idToken;
+            }
+            else
+            {
+                throw new Exception("Email ou senha inválidos");
+            }
         }
 
         public async Task<string> GenerateTokenAsync(string uid)

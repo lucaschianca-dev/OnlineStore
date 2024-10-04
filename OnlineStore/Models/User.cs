@@ -17,7 +17,6 @@ namespace OnlineStore.Models
         [FirestoreProperty]
         public string Role { get; set; }
 
-
         public User(){}
     }
 }

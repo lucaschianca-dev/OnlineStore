@@ -1,5 +1,7 @@
 ﻿using Google.Cloud.Firestore;
 using OnlineStore.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace OnlineStore.Repositories
 {
@@ -25,6 +27,26 @@ namespace OnlineStore.Repositories
             return snapshot.Exists ? snapshot.ConvertTo<User>() : null;
         }
 
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            var query = _firestoreDb.Collection("Users").WhereEqualTo("Email", email);
+            QuerySnapshot snapshot = await query.GetSnapshotAsync();
+
+            return snapshot.Documents.Count > 0 ? snapshot.Documents[0].ConvertTo<User>() : null;
+        }
+
+        public async Task UpdateUserAsync(User user)
+        {
+            DocumentReference userRef = _firestoreDb.Collection("Users").Document(user.Id);
+            await userRef.SetAsync(user, SetOptions.MergeAll);
+        }
+
+        public async Task DeleteUserAsync(string id)
+        {
+            DocumentReference userRef = _firestoreDb.Collection("Users").Document(id);
+            await userRef.DeleteAsync();
+        }
+
         public async Task<List<User>> GetAllUsersAsync()
         {
             CollectionReference usersRef = _firestoreDb.Collection("Users");
@@ -39,18 +61,6 @@ namespace OnlineStore.Repositories
                 }
             }
             return users;
-        }
-
-        public async Task UpdateUserAsync(User user)
-        {
-            DocumentReference userRef = _firestoreDb.Collection("Users").Document(user.Id);
-            await userRef.SetAsync(user, SetOptions.MergeAll);
-        }
-
-        public async Task DeleteUserAsync(string id)
-        {
-            DocumentReference userRef = _firestoreDb.Collection("Users").Document(id);
-            await userRef.DeleteAsync();
         }
     }
 }

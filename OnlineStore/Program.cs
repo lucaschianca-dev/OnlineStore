@@ -3,11 +3,11 @@ using Microsoft.IdentityModel.Tokens;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Firestore;
-using OnlineStore.Mapper; // Importar todos os profiles
 using OnlineStore.Repositories;
 using OnlineStore.Services;
 using Microsoft.OpenApi.Models;
 using OnlineStore.Mapper.ItemProfile;
+using OnlineStore.Repositories.PendingUserRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,12 +76,17 @@ builder.Services.AddSingleton(sp =>
     return FirestoreDb.Create("onlinestore-fde01");
 });
 
-// Registrar os repositórios e serviços
+// Registrar repositórios
+builder.Services.AddScoped<IPendingUserRepository, PendingUserRepository>();
 builder.Services.AddScoped<IItemRepository, ItemRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// Registrar serviços
 builder.Services.AddScoped<ItemService>();
-builder.Services.AddScoped<AuthService>();  // Serviço de autenticação
-builder.Services.AddScoped<IUserRepository, UserRepository>();  // Repositório de usuários
-builder.Services.AddScoped<UserService>();  // Serviço para usuários
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<SendEmailService>();
+builder.Services.AddHttpClient<AuthService>();
 
 // Adicionar controladores
 builder.Services.AddControllers();

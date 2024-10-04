@@ -35,21 +35,34 @@ namespace OnlineStore.Controllers
             }
         }
 
+        [HttpGet("verify-email")]
+        public async Task<IActionResult> VerifyEmail(string uid)
+        {
+            try
+            {
+                // Chamar o método do AuthService para verificar o email e criar o usuário no Firebase
+                await _authService.VerifyEmailAsync(uid);
+                return Ok("Email verificado com sucesso.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro na verificação do email: {ex.Message}");
+            }
+        }
+
+
         [HttpPost("login")]
         public async Task<IActionResult> Login(string email, string password)
         {
             try
             {
-                // O AuthService lida com o login
-                var user = await _authService.LoginAsync(email, password);
-
-                // Gera o token JWT
-                var token = await _authService.GenerateTokenAsync(user.Id);
-                return Ok(new { token, user });
+                // Verifica email e senha usando a API REST do Firebase
+                var token = await _authService.LoginAsync(email, password);
+                return Ok(new { token });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { message = ex.Message });
             }
         }
     }
