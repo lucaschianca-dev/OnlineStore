@@ -5,7 +5,7 @@ using SendGrid.Helpers.Mail;
 
 public class SendEmailService
 {
-    private const string SendGridApiKey = "SEND_GRID_APId"; // Coloque sua chave de API do SendGrid aqui
+    private const string SendGridApiKey = "SEND_GRID_API"; // Coloque sua chave de API do SendGrid aqui
 
     // Método para enviar o email de verificação
     public async Task SendEmailVerificationAsync(PendingUser pendingUser)
