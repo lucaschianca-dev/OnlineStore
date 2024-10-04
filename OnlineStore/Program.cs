@@ -87,6 +87,9 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<SendEmailService>();
 builder.Services.AddHttpClient<AuthService>();
+builder.Services.AddScoped<PendingUserCleanupService>();
+builder.Services.AddHostedService<PendingUserCleanupBackgroundService>();
+
 
 // Adicionar controladores
 builder.Services.AddControllers();

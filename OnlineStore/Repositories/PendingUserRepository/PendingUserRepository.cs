@@ -30,5 +30,22 @@ namespace OnlineStore.Repositories.PendingUserRepository
             DocumentReference pendingUserRef = _firestoreDb.Collection("PendingUsers").Document(id);
             await pendingUserRef.DeleteAsync();
         }
+
+        public async Task<List<PendingUser>> GetPendingUsersOlderThanAsync(int days)
+        {
+            CollectionReference pendingUsersRef = _firestoreDb.Collection("PendingUsers");
+            DateTime cutoffDate = DateTime.UtcNow.AddDays(-days);
+
+            Query query = pendingUsersRef.WhereLessThanOrEqualTo("CreationDate", cutoffDate);
+            QuerySnapshot snapshot = await query.GetSnapshotAsync();
+
+            List<PendingUser> pendingUsers = new List<PendingUser>();
+            foreach (DocumentSnapshot document in snapshot.Documents)
+            {
+                pendingUsers.Add(document.ConvertTo<PendingUser>());
+            }
+
+            return pendingUsers;
+        }
     }
 }
