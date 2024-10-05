@@ -11,11 +11,13 @@ namespace OnlineStore.Services
     public class ItemService
     {
         private readonly IMapper _mapper;
+        private readonly IUserRepository _userRepository;
         private readonly IItemRepository _itemRepository;
 
-        public ItemService(IMapper mapper, IItemRepository itemRepository)
+        public ItemService(IMapper mapper, IUserRepository userRepository, IItemRepository itemRepository)
         {
             _mapper = mapper;
+            _userRepository = userRepository;
             _itemRepository = itemRepository;
         }
 
@@ -27,6 +29,28 @@ namespace OnlineStore.Services
         public async Task<Item> GetItemByIdAsync(string id)
         {
             return await _itemRepository.GetItemByIdAsync(id);
+        }
+
+        public async Task<CriarItemOutput> AddItemToUserAsync(string userId, CriarItemInput input)
+        {
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                return new CriarItemOutput { Sucesso = false, MensagemErro = "Usuário não encontrado" };
+            }
+
+            // Mapear input para o modelo Item
+            var item = _mapper.Map<Item>(input);
+            user.Items.Add(item);  // Adiciona o item à lista de itens do usuário
+
+            // Atualiza o usuário com o novo item
+            await _userRepository.UpdateUserAsync(userId, user);
+
+            return new CriarItemOutput
+            {
+                Sucesso = true,
+                Id = item.Id
+            };
         }
 
         public async Task<CriarItemOutput> AddItemAsync(CriarItemInput input)

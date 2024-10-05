@@ -43,18 +43,25 @@ namespace OnlineStore.Controllers
             return Ok(users);
         }
 
-        [HttpPatch("update")]
-        public async Task<IActionResult> UpdateUser(UpdateUserInput input)
+        [HttpPatch("{userId}")]
+        public async Task<IActionResult> UpdateUserPartially(string userId, [FromBody] UpdateUserInput input)
         {
-            try
+            // Verifica se o modelo de entrada é válido
+            if (!ModelState.IsValid)
             {
-                await _userService.UpdateUserAsync(input);
-                return Ok("Usuário atualizado com sucesso.");
+                return BadRequest(ModelState);
             }
-            catch (Exception ex)
+
+            // Chama o serviço para atualizar o usuário de forma parcial
+            var result = await _userService.UpdateUserAsync(userId, input);
+
+            if (!result)
             {
-                return BadRequest(ex.Message);
+                return NotFound(new { message = "Usuário não encontrado" });
             }
+
+            // Retorna uma resposta de sucesso
+            return Ok(new { message = "Usuário atualizado com sucesso" });
         }
 
         [HttpDelete("delete/{id}")]

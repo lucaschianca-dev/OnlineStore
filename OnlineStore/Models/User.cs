@@ -29,6 +29,9 @@ namespace OnlineStore.Models
         [FirestoreProperty]
         public DateTime CreationDate { get; set; } = DateTime.UtcNow;
 
+        [FirestoreProperty]
+        public List<Item> Items { get; set; } = new List<Item>();
+
         public User() { }
     }
 }

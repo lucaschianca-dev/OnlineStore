@@ -45,6 +45,33 @@ public class ItemController : ControllerBase
         return Ok(item);
     }
 
+    [HttpPost("user/{userId}")]
+    public async Task<IActionResult> AddItemToUser(string userId, [FromBody] CriarItemInput input)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        try
+        {
+            var result = await _itemService.AddItemToUserAsync(userId, input);
+
+            if (result.Sucesso)
+            {
+                return CreatedAtAction(nameof(GetItemsById), new { id = result.Id }, result);
+            }
+            else
+            {
+                return BadRequest(result.MensagemErro);
+            }
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Erro ao adicionar item: {ex.Message}");
+        }
+    }
+
     [Authorize]
     [HttpPost]
     public async Task<IActionResult> AddItem([FromBody] CriarItemInput input)

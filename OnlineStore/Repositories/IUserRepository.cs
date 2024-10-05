@@ -9,7 +9,7 @@ namespace OnlineStore.Repositories
         Task AddUserAsync(User user);
         Task<User> GetUserByIdAsync(string id);
         Task<User> GetUserByEmailAsync(string email);
-        Task UpdateUserAsync(User user);
+        Task<bool> UpdateUserAsync(string id,User user);
         Task DeleteUserAsync(string id);
         Task<List<User>> GetAllUsersAsync();
     }

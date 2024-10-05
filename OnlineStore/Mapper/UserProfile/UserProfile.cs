@@ -11,11 +11,18 @@ public class UserProfile : Profile
     {
         // Mapeamento de UpdateUserInput para User
         CreateMap<UpdateUserInput, User>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore()); // O ID não será alterado durante a atualização
+             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null)); // Apenas mapeia campos que não são nulos
 
         CreateMap<UserRecord, User>()
             .ForMember(dest => dest.Id, opt => opt.Ignore()) // O ID é gerado pelo Firebase
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
+
+        CreateMap<User, UserRecordArgs>()
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+            .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.FullName))
+            .ForMember(dest => dest.Uid, opt => opt.Ignore()) // O Uid será definido manualmente no serviço
+            .ForMember(dest => dest.Password, opt => opt.Ignore()) // O Password não será atualizado aqui
+            .ForMember(dest => dest.PhoneNumber, opt => opt.Ignore()); // Ignora outros campos não relevantes
 
         // Mapeamento de PendingUser para User
         CreateMap<PendingUser, User>()

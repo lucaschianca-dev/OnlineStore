@@ -35,10 +35,18 @@ namespace OnlineStore.Repositories
             return snapshot.Documents.Count > 0 ? snapshot.Documents[0].ConvertTo<User>() : null;
         }
 
-        public async Task UpdateUserAsync(User user)
+        public async Task<bool> UpdateUserAsync(string id, User user)
         {
-            DocumentReference userRef = _firestoreDb.Collection("Users").Document(user.Id);
-            await userRef.SetAsync(user, SetOptions.MergeAll);
+            DocumentReference userRef = _firestoreDb.Collection("Users").Document(id);
+            DocumentSnapshot snapshot = await userRef.GetSnapshotAsync();
+
+            if (snapshot.Exists)
+            {
+                await userRef.SetAsync(user, SetOptions.MergeAll);
+                return true;
+            }
+
+            return false;
         }
 
         public async Task DeleteUserAsync(string id)
