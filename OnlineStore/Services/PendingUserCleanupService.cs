@@ -18,7 +18,7 @@ public class PendingUserCleanupService
         foreach (var pendingUser in oldPendingUsers)
         {
             await _pendingUserRepository.DeletePendingUserAsync(pendingUser.Id);
-            Console.WriteLine($"PendingUser com email {pendingUser.Id} removido por inatividade.");
+            Console.WriteLine($"PendingUser com email {pendingUser.Email} removido por inatividade.");
         }
     }
 }
