@@ -6,7 +6,7 @@ namespace OnlineStore.Models;
 [FirestoreData]
 public class Item
 {
-    [Key]  
+    [FirestoreProperty]
     public string Id { get; set; } = Guid.NewGuid().ToString();
 
     [Required]

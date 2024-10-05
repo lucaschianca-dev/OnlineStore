@@ -1,4 +1,6 @@
 ﻿using Google.Cloud.Firestore;
+using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace OnlineStore.Models
 {
@@ -9,17 +11,24 @@ namespace OnlineStore.Models
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [FirestoreProperty]
-        public string Email { get; set; }
+        [Required(ErrorMessage = "Email é obrigatório.")]
+        [EmailAddress(ErrorMessage = "Formato de email inválido.")]
+        public string Email { get; set; } = string.Empty;
 
         [FirestoreProperty]
-        public string FullName { get; set; }
+        [Required(ErrorMessage = "Nome completo é obrigatório.")]
+        [MinLength(3, ErrorMessage = "O Nome Completo deve ter pelo menos 3 caracteres.")]
+        [MaxLength(40, ErrorMessage = "O Nome Completo deve ter no máximo 40 caracteres.")]
+        public string FullName { get; set; } = string.Empty;
 
         [FirestoreProperty]
-        public string Role { get; set; }
+        [Required(ErrorMessage = "Role é obrigatória.")]
+        [RegularExpression("^(ADMIN|CLIENT)$", ErrorMessage = "Role deve ser ADMIN ou CLIENT.")]
+        public string Role { get; set; } = "CLIENT";
 
         [FirestoreProperty]
         public DateTime CreationDate { get; set; } = DateTime.UtcNow;
 
-        public User(){}
+        public User() { }
     }
 }
