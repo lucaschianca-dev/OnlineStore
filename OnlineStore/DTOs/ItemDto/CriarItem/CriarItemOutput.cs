@@ -7,6 +7,7 @@ public class CriarItemOutput
     public decimal Price { get; set; }
     public string Description { get; set; }
     public int StockQuantity { get; set; }
+    public bool IsAvailable { get; set; }
     public bool Sucesso { get; set; }
     public string MensagemErro { get; set; }
 }

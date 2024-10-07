@@ -12,11 +12,15 @@ public class ClientOrderRepository : IClientOrderRepository
         _firestoreDb = firestoreDb;
     }
 
-    public async Task<string> AddClientOrderAsync(ClientOrder clientOrder)
+    public async Task<string> CreateClientOrderAsync(ClientOrder order)
     {
-        CollectionReference ordersRef = _firestoreDb.Collection("ClientOrders");
-        DocumentReference addedDoc = await ordersRef.AddAsync(clientOrder);
-        return addedDoc.Id; // Retorna o ID da nova ordem
+        CollectionReference collectionReference = _firestoreDb.Collection("ClientOrders");
+        DocumentReference documentReference = await collectionReference.AddAsync(order);
+
+        // O Firestore gera um ID automaticamente
+        order.Id = documentReference.Id; // Atribui o ID gerado ao objeto
+
+        return documentReference.Id; // Retorna o ID do pedido criado
     }
 
     public async Task<ClientOrder> GetClientOrderByUserIdAsync(string userId)

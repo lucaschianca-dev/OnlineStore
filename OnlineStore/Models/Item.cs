@@ -6,8 +6,8 @@ namespace OnlineStore.Models;
 [FirestoreData]
 public class Item
 {
-    [FirestoreProperty]
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    [FirestoreDocumentId]
+    public string Id { get; set; }
 
     [Required]
     [StringLength(100, ErrorMessage = "O nome não pode exceder 100 caracteres.")]

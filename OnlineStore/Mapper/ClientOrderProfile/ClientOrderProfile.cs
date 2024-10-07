@@ -8,11 +8,12 @@ public class ClientOrderProfile: Profile
 {
     public ClientOrderProfile()
     {
-        // Mapeamento de AddClientOrderInput para ClientOrderService
+        // Mapeamento de CreateClientOrderInput para ClientOrder
         CreateMap<AddClientOrderInput, ClientOrder>();
 
         // Mapeamento de ClientOrderService para AddClientOrderOutput
         CreateMap<ClientOrder, AddClientOrderOutput>()
+            .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.Id)) // Mapear o Id para OrderId
             .ForMember(dest => dest.Sucesso, opt => opt.MapFrom(_ => true)); // Sucesso sempre será true no mapeamento
     }
 }

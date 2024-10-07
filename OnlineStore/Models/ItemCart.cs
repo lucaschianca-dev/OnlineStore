@@ -6,7 +6,7 @@ namespace OnlineStore.Models;
 public class ItemCart
 {
     [FirestoreProperty]
-    public string ProductId { get; set; }
+    public string ItemId { get; set; }
 
     [FirestoreProperty]
     public int Quantity { get; set; }

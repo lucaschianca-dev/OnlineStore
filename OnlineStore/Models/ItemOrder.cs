@@ -12,8 +12,8 @@ public class ItemOrder
     public int Quantity { get; set; }
 
     [FirestoreProperty]
-    public decimal UnitPrice { get; set; }
+    public double UnitPrice { get; set; }
 
     [FirestoreProperty]
-    public decimal TotalPrice => Quantity * UnitPrice;
+    public double TotalPrice => Quantity * UnitPrice;
 }

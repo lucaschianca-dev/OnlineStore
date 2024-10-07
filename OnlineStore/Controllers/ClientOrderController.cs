@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OnlineStore.DTOs.ClientOrderDto.AddClientOrder;
+using OnlineStore.Models;
 using OnlineStore.Services.ClientOrderService;
 
 namespace OnlineStore.Controllers;
@@ -15,11 +16,32 @@ public class ClientOrderController : ControllerBase
         _clientOrderService = clientOrderService;
     }
 
-    //[HttpPost]
-    //public async Task<IActionResult> AddClientOrder([FromBody] AddClientOrderInput input)
-    //{
+    [HttpPost]
+    public async Task<IActionResult> CreateOrder([FromBody] AddClientOrderInput input)
+    {
+        if (input == null || input.Items == null || input.Items.Count == 0)
+        {
+            return BadRequest("A lista de itens não pode estar vazia.");
+        }
 
-    //}
+        try
+        {
+            bool orderCreated = await _clientOrderService.CreateClientOrderAsync(input);
+
+            if (orderCreated)
+            {
+                return Ok(new { message = "Pedido criado com sucesso!" });
+            }
+            else
+            {
+                return NotFound(new { message = "Usuário não encontrado." });
+            }
+        }
+        catch (System.Exception ex)
+        {
+            return StatusCode(500, $"Erro ao criar o pedido: {ex.Message}");
+        }
+    }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetClientOrderById(string id)

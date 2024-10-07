@@ -9,5 +9,5 @@ public class AddClientOrderInput
     public string UserId { get; set; }
 
     [Required]
-    public List<ItemOrderInput> OrderItems { get; set; }
+    public List<ItemOrderInput> Items { get; set; }
 }

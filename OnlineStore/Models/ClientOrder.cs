@@ -5,8 +5,8 @@ namespace OnlineStore.Models;
 [FirestoreData]
 public class ClientOrder
 {
-    [FirestoreProperty]
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    [FirestoreDocumentId]
+    public string Id { get; set; }
 
     [FirestoreProperty]
     public string UserId { get; set; } // Firebase Authentication UserId
@@ -15,7 +15,7 @@ public class ClientOrder
     public List<ItemOrder> Items { get; set; } = new List<ItemOrder>();
 
     [FirestoreProperty]
-    public decimal TotalAmount { get; set; }
+    public double TotalAmount { get; set; }
 
     [FirestoreProperty]
     public DateTime OrderDate { get; set; } = DateTime.UtcNow;

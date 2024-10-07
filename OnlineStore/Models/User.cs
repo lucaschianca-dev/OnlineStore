@@ -7,8 +7,8 @@ namespace OnlineStore.Models
     [FirestoreData]
     public class User
     {
-        [FirestoreProperty]
-        public string Id { get; set; } = Guid.NewGuid().ToString();
+        [FirestoreDocumentId]
+        public string Id { get; set; }
 
         [FirestoreProperty]
         [Required(ErrorMessage = "Email é obrigatório.")]
@@ -25,6 +25,9 @@ namespace OnlineStore.Models
         [Required(ErrorMessage = "Role é obrigatória.")]
         [RegularExpression("^(ADMIN|CLIENT)$", ErrorMessage = "Role deve ser ADMIN ou CLIENT.")]
         public string Role { get; set; } = "CLIENT";
+
+        [FirestoreProperty]
+        public List<string> ClientOrderIds { get; set; } = new List<string>(); // IDs dos pedidos relacionados
 
         [FirestoreProperty]
         public DateTime CreationAt { get; set; } = DateTime.UtcNow;
