@@ -10,6 +10,6 @@ public class ItemOrderProfile : Profile
     {
         // Mapeamento de ItemOrderInput para ItemOrder
         CreateMap<ItemOrderInput, ItemOrder>()
-            .ForMember(dest => dest.TotalPrice, opt => opt.Ignore()); // Calcularemos o TotalPrice manualmente no back-end
+            .ForMember(dest => dest.UnitPrice, opt => opt.Ignore());
     }
 }
