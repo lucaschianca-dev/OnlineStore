@@ -1,4 +1,5 @@
 ﻿using Google.Cloud.Firestore;
+using OnlineStore.Enums;
 using OnlineStore.Models;
 
 namespace OnlineStore.Repositories.ClientOrderRepository;
@@ -41,13 +42,18 @@ public class ClientOrderRepository : IClientOrderRepository
     {
         QuerySnapshot snapshot = await _firestoreDb.Collection("ClientOrders").GetSnapshotAsync();
         var orders = new List<ClientOrder>();
+
         foreach (var doc in snapshot.Documents)
         {
             if (doc.Exists)
             {
-                orders.Add(doc.ConvertTo<ClientOrder>());
+                var order = doc.ConvertTo<ClientOrder>();
+
+                // O OrderStatusEnum será acessado corretamente via a propriedade computada
+                orders.Add(order);
             }
         }
+
         return orders;
     }
 
