@@ -27,6 +27,6 @@ public class UserProfile : Profile
         // Mapeamento de PendingUser para User
         CreateMap<PendingUser, User>()
             .ForMember(dest => dest.Id, opt => opt.Ignore()) // O ID será definido mais tarde
-            .ForMember(dest => dest.CreationDate, opt => opt.MapFrom(src => src.CreationDate)); // Mapear a data de criação
+            .ForMember(dest => dest.CreationAt, opt => opt.MapFrom(src => src.CreationAt)); // Mapear a data de criação
     }
 }

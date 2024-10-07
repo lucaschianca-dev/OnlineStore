@@ -8,6 +8,9 @@ using OnlineStore.Services;
 using Microsoft.OpenApi.Models;
 using OnlineStore.Mapper.ItemProfile;
 using OnlineStore.Repositories.PendingUserRepository;
+using OnlineStore.Mapper.ClientOrderProfile;
+using OnlineStore.Repositories.ClientOrderRepository;
+using OnlineStore.Services.ClientOrderService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,7 +71,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 // Configurar AutoMapper
-builder.Services.AddAutoMapper(typeof(UserProfile), typeof(ItemProfile)); // Adicionar todos os perfis de mapeamento
+builder.Services.AddAutoMapper(typeof(UserProfile), typeof(ItemProfile), typeof(ClientOrderProfile)); // Adicionar todos os perfis de mapeamento
 
 // Registrar FirestoreDb como singleton (banco de dados do Firebase)
 builder.Services.AddSingleton(sp =>
@@ -80,6 +83,7 @@ builder.Services.AddSingleton(sp =>
 builder.Services.AddScoped<IPendingUserRepository, PendingUserRepository>();
 builder.Services.AddScoped<IItemRepository, ItemRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IClientOrderRepository, ClientOrderRepository>();
 
 // Registrar serviços
 builder.Services.AddScoped<ItemService>();
@@ -89,6 +93,7 @@ builder.Services.AddScoped<SendEmailService>();
 builder.Services.AddHttpClient<AuthService>();
 builder.Services.AddScoped<PendingUserCleanupService>();
 builder.Services.AddHostedService<PendingUserCleanupBackgroundService>();
+builder.Services.AddScoped<ClientOrderService>();
 
 
 // Adicionar controladores

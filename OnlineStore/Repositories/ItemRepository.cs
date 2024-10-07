@@ -25,10 +25,17 @@ namespace OnlineStore.Repositories
             {
                 if (documentSnapshot.Exists)
                 {
-                    Dictionary<string, object> item = documentSnapshot.ToDictionary();
-                    string json = JsonConvert.SerializeObject(item);
-                    Item newItem = JsonConvert.DeserializeObject<Item>(json);
+                    // Converte diretamente o snapshot em um objeto Item
+                    Item newItem = documentSnapshot.ConvertTo<Item>();
                     newItem.Id = documentSnapshot.Id;
+
+                    // Verifica se o campo CreationAt foi corretamente convertido
+                    if (newItem.CreationAt == default)
+                    {
+                        // Definir uma data padrão se a conversão falhar
+                        newItem.CreationAt = DateTime.UtcNow;
+                    }
+
                     ItemsList.Add(newItem);
                 }
             }
@@ -43,10 +50,13 @@ namespace OnlineStore.Repositories
 
             if (documentSnapshot.Exists)
             {
-                Dictionary<string, object> item = documentSnapshot.ToDictionary();
-                string json = JsonConvert.SerializeObject(item);
-                Item newItem = JsonConvert.DeserializeObject<Item>(json);
+                Item newItem = documentSnapshot.ConvertTo<Item>();
                 newItem.Id = documentSnapshot.Id;
+                if (newItem.CreationAt == default)
+                {
+                    // Definir uma data padrão se a conversão falhar
+                    newItem.CreationAt = DateTime.UtcNow;
+                }
                 return newItem;
             }
             else

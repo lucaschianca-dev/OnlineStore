@@ -1,10 +1,11 @@
 using OnlineStore.Models;
-using OnlineStore.DTOs.Item.CriarItem;
+using OnlineStore.DTOs.ItemDto.CriarItem;
 using AutoMapper;
-using OnlineStore.DTOs.Item.AtualizarItem;
+using OnlineStore.DTOs.ItemDto.AtualizarItem;
 using OnlineStore.Repositories;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using OnlineStore.Repositories.ClientOrderRepository;
 
 namespace OnlineStore.Services
 {
@@ -13,12 +14,14 @@ namespace OnlineStore.Services
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
         private readonly IItemRepository _itemRepository;
+        private readonly IClientOrderRepository _clientOrderRepository;
 
-        public ItemService(IMapper mapper, IUserRepository userRepository, IItemRepository itemRepository)
+        public ItemService(IMapper mapper, IUserRepository userRepository, IItemRepository itemRepository, IClientOrderRepository clientOrderRepository)
         {
             _mapper = mapper;
             _userRepository = userRepository;
             _itemRepository = itemRepository;
+            _clientOrderRepository = clientOrderRepository;
         }
 
         public async Task<List<Item>> GetItemsAsync()
@@ -31,31 +34,12 @@ namespace OnlineStore.Services
             return await _itemRepository.GetItemByIdAsync(id);
         }
 
-        public async Task<CriarItemOutput> AddItemToUserAsync(string userId, CriarItemInput input)
-        {
-            var user = await _userRepository.GetUserByIdAsync(userId);
-            if (user == null)
-            {
-                return new CriarItemOutput { Sucesso = false, MensagemErro = "Usuário não encontrado" };
-            }
-
-            // Mapear input para o modelo Item
-            var item = _mapper.Map<Item>(input);
-            user.Items.Add(item);  // Adiciona o item à lista de itens do usuário
-
-            // Atualiza o usuário com o novo item
-            await _userRepository.UpdateUserAsync(userId, user);
-
-            return new CriarItemOutput
-            {
-                Sucesso = true,
-                Id = item.Id
-            };
-        }
-
         public async Task<CriarItemOutput> AddItemAsync(CriarItemInput input)
         {
             var item = _mapper.Map<Item>(input);
+            item.CreationAt = DateTime.UtcNow;  // Garantir que a data seja UTC
+            item.UpdatedAt = DateTime.UtcNow;  // Garantir que a data seja UTC
+
             try
             {
                 string id = await _itemRepository.AddItemAsync(item);
@@ -77,8 +61,43 @@ namespace OnlineStore.Services
 
         public async Task<bool> UpdateItemAsync(string id, AtualizarItemInput input)
         {
-            var updatedItem = _mapper.Map<Item>(input);
-            return await _itemRepository.UpdateItemAsync(id, updatedItem);
+            var existingItem = await _itemRepository.GetItemByIdAsync(id);
+            if (existingItem == null)
+            {
+                return false; // Ou lançar uma exceção de item não encontrado
+            }
+
+            // Apenas atualize os campos se eles foram fornecidos no input
+            if (!string.IsNullOrEmpty(input.Name))
+            {
+                existingItem.Name = input.Name;
+            }
+
+            if (input.Price.HasValue)
+            {
+                existingItem.Price = input.Price.Value;
+            }
+
+            if (!string.IsNullOrEmpty(input.Description))
+            {
+                existingItem.Description = input.Description;
+            }
+
+            if (input.StockQuantity.HasValue)
+            {
+                existingItem.StockQuantity = input.StockQuantity.Value;
+            }
+
+            if (input.IsAvailable.HasValue)
+            {
+                existingItem.IsAvailable = input.IsAvailable.Value;
+            }
+
+            // Atualiza o campo UpdatedAt para a data atual
+            existingItem.UpdatedAt = DateTime.UtcNow;
+
+            // Chama o repositório para aplicar as alterações
+            return await _itemRepository.UpdateItemAsync(id, existingItem);
         }
 
         public async Task<bool> DeleteItemAsync(string id)

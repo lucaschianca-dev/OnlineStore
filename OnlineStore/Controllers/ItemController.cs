@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OnlineStore.DTOs.Item.AtualizarItem;
-using OnlineStore.DTOs.Item.CriarItem;
+using OnlineStore.DTOs.ItemDto.AtualizarItem;
+using OnlineStore.DTOs.ItemDto.CriarItem;
 using OnlineStore.Models;
 using OnlineStore.Services;
 
@@ -32,7 +32,7 @@ public class ItemController : ControllerBase
         }
     }
 
-    [Authorize]
+    //Authorize]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetItemsById(string id)
     {
@@ -45,34 +45,7 @@ public class ItemController : ControllerBase
         return Ok(item);
     }
 
-    [HttpPost("user/{userId}")]
-    public async Task<IActionResult> AddItemToUser(string userId, [FromBody] CriarItemInput input)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
-        try
-        {
-            var result = await _itemService.AddItemToUserAsync(userId, input);
-
-            if (result.Sucesso)
-            {
-                return CreatedAtAction(nameof(GetItemsById), new { id = result.Id }, result);
-            }
-            else
-            {
-                return BadRequest(result.MensagemErro);
-            }
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Erro ao adicionar item: {ex.Message}");
-        }
-    }
-
-    [Authorize]
+    //[Authorize]
     [HttpPost]
     public async Task<IActionResult> AddItem([FromBody] CriarItemInput input)
     {
@@ -100,7 +73,7 @@ public class ItemController : ControllerBase
         }
     }
 
-    [Authorize]
+    //[Authorize]
     [HttpPatch("{id}")]
     public async Task<IActionResult> UpdateItemPartially(string id, [FromBody] AtualizarItemInput input)
     {
@@ -114,7 +87,7 @@ public class ItemController : ControllerBase
         return NotFound(new { message = "Item não encontrado" });
     }
 
-    [Authorize]
+    //[Authorize]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteItem(string id)
     {

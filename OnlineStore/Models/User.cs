@@ -27,10 +27,10 @@ namespace OnlineStore.Models
         public string Role { get; set; } = "CLIENT";
 
         [FirestoreProperty]
-        public DateTime CreationDate { get; set; } = DateTime.UtcNow;
+        public DateTime CreationAt { get; set; } = DateTime.UtcNow;
 
         [FirestoreProperty]
-        public List<Item> Items { get; set; } = new List<Item>();
+        public DateTime UpdatedAt { get; set; }
 
         public User() { }
     }
