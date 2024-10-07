@@ -2,12 +2,13 @@ using OnlineStore.Models;
 using OnlineStore.DTOs.ItemDto.CriarItem;
 using AutoMapper;
 using OnlineStore.DTOs.ItemDto.AtualizarItem;
-using OnlineStore.Repositories;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using OnlineStore.Repositories.ClientOrderRepository;
+using OnlineStore.Repositories.ItemRepository;
+using OnlineStore.Repositories.UserRepository;
 
-namespace OnlineStore.Services
+namespace OnlineStore.Services.itemService
 {
     public class ItemService
     {

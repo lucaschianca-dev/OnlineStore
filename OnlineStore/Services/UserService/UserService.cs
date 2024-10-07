@@ -3,10 +3,10 @@ using FirebaseAdmin.Auth;
 using OnlineStore.DTOs.User;
 using OnlineStore.DTOs.User.UpdateUser;
 using OnlineStore.Models;
-using OnlineStore.Repositories;
+using OnlineStore.Repositories.UserRepository;
 using System.Threading.Tasks;
 
-namespace OnlineStore.Services
+namespace OnlineStore.Services.UserService
 {
     public class UserService
     {

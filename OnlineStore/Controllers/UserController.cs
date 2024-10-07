@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OnlineStore.DTOs.User.UpdateUser;
 using OnlineStore.Models;
-using OnlineStore.Services;
+using OnlineStore.Services.UserService;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

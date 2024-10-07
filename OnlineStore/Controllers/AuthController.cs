@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OnlineStore.DTOs.User;
 using OnlineStore.DTOs.User.RegisterUserInput;
-using OnlineStore.Services;
+using OnlineStore.Services.AuthService;
 using System.Threading.Tasks;
 
 namespace OnlineStore.Controllers

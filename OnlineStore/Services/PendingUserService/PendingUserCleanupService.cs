@@ -1,6 +1,6 @@
 ﻿using OnlineStore.Repositories.PendingUserRepository;
 
-namespace OnlineStore.Services;
+namespace OnlineStore.Services.PendingUserService;
 
 public class PendingUserCleanupService
 {

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineStore.DTOs.ItemDto.AtualizarItem;
 using OnlineStore.DTOs.ItemDto.CriarItem;
 using OnlineStore.Models;
-using OnlineStore.Services;
+using OnlineStore.Services.itemService;
 
 namespace OnlineStore.Controllers;
 

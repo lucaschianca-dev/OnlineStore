@@ -3,7 +3,7 @@ using OnlineStore.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace OnlineStore.Repositories
+namespace OnlineStore.Repositories.UserRepository
 {
     public class UserRepository : IUserRepository
     {

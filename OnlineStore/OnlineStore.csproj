@@ -47,8 +47,4 @@
       <Content Remove="Mapper\ItemProfile\CriaritemMapper\**" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Repositories\ItemRepository\" />
-    </ItemGroup>
-
 </Project>

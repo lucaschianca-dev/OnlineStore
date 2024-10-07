@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using OnlineStore.DTOs.ClientOrderDto.AddClientOrder;
 using OnlineStore.Models;
-using OnlineStore.Repositories;
 using OnlineStore.Repositories.ClientOrderRepository;
+using OnlineStore.Repositories.ItemRepository;
 
 namespace OnlineStore.Services.ClientOrderService;
 

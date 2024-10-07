@@ -3,14 +3,18 @@ using Microsoft.IdentityModel.Tokens;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Firestore;
-using OnlineStore.Repositories;
-using OnlineStore.Services;
 using Microsoft.OpenApi.Models;
 using OnlineStore.Mapper.ItemProfile;
 using OnlineStore.Repositories.PendingUserRepository;
 using OnlineStore.Mapper.ClientOrderProfile;
 using OnlineStore.Repositories.ClientOrderRepository;
 using OnlineStore.Services.ClientOrderService;
+using OnlineStore.Repositories.ItemRepository;
+using OnlineStore.Repositories.UserRepository;
+using OnlineStore.Services.PendingUserService;
+using OnlineStore.Services.AuthService;
+using OnlineStore.Services.itemService;
+using OnlineStore.Services.UserService;
 
 var builder = WebApplication.CreateBuilder(args);
 

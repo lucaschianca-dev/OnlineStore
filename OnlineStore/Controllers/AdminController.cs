@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OnlineStore.Services;
+using OnlineStore.Services.PendingUserService;
 
 [ApiController]
 [Route("api/[controller]")]

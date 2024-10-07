@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using OnlineStore.Services;
+using OnlineStore.Services.PendingUserService;
 
 public class PendingUserCleanupBackgroundService : BackgroundService
 {

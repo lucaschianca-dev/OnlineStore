@@ -3,11 +3,11 @@ using FirebaseAdmin.Auth;
 using Newtonsoft.Json;
 using OnlineStore.DTOs.User.RegisterUserInput;
 using OnlineStore.Models;
-using OnlineStore.Repositories;
 using OnlineStore.Repositories.PendingUserRepository;
+using OnlineStore.Repositories.UserRepository;
 using System.Text;
 
-namespace OnlineStore.Services
+namespace OnlineStore.Services.AuthService
 {
     public class AuthService
     {
@@ -20,7 +20,7 @@ namespace OnlineStore.Services
         // Insira sua API key do Firebase aqui (ou carregue-a de uma configuração)
         private const string FirebaseApiKey = "AIzaSyD_ULUGuEN_FO2gkhtEf5KSMrBggNXQZ5E";
 
-        public AuthService(IMapper mapper, IUserRepository userRepository,IPendingUserRepository pendingUserRepository, HttpClient httpClient, SendEmailService sendEmailService)
+        public AuthService(IMapper mapper, IUserRepository userRepository, IPendingUserRepository pendingUserRepository, HttpClient httpClient, SendEmailService sendEmailService)
         {
             _mapper = mapper;
             _userRepository = userRepository;
@@ -86,8 +86,8 @@ namespace OnlineStore.Services
         {
             var requestBody = new
             {
-                email = email,
-                password = password,
+                email,
+                password,
                 returnSecureToken = true
             };
 

@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace OnlineStore.Repositories
+namespace OnlineStore.Repositories.UserRepository
 {
     public interface IUserRepository
     {
         Task AddUserAsync(User user);
         Task<User> GetUserByIdAsync(string id);
         Task<User> GetUserByEmailAsync(string email);
-        Task<bool> UpdateUserAsync(string id,User user);
+        Task<bool> UpdateUserAsync(string id, User user);
         Task DeleteUserAsync(string id);
         Task<List<User>> GetAllUsersAsync();
     }

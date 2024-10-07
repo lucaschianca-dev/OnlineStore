@@ -2,11 +2,11 @@
 using OnlineStore.DTOs.User.RegisterUserInput;
 using OnlineStore.Models;
 
-namespace OnlineStore.Mapper.UserProfile;
+namespace OnlineStore.Mapper.PendingUserProfile;
 
 public class PendingUserProfile : Profile
 {
-    public PendingUserProfile() 
+    public PendingUserProfile()
     {
         // Mapeamento de RegisterUserInput para PendingUser
         CreateMap<RegisterUserInput, PendingUser>()
