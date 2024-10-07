@@ -28,7 +28,7 @@ public class Item
     public int StockQuantity { get; set; }
 
     [FirestoreProperty]
-    public bool IsAvailable { get; set; }
+    public bool IsAvailable { get; set; } = true;
 
     [FirestoreProperty]
     public DateTime CreationAt { get; set; } = DateTime.UtcNow;
