@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using OnlineStore.DTOs.ClientOrderDto.AddClientOrder;
+using OnlineStore.Enums;
 using OnlineStore.Models;
 using OnlineStore.Repositories.ClientOrderRepository;
 using OnlineStore.Repositories.ItemRepository;
@@ -46,7 +47,7 @@ public class ClientOrderService
         var order = _mapper.Map<ClientOrder>(input);
         order.Items = itemsOrder; // Substituir os itens mapeados
         order.TotalAmount = totalAmount; // Atribuir o valor total calculado
-        order.Status = "Pendente";
+        order.Status = OrderStatus.PENDING.ToString();
         order.OrderDate = DateTime.UtcNow;
 
         string orderId = await _clientOrderRepository.CreateClientOrderAsync(order);
