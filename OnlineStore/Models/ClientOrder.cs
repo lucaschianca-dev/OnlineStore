@@ -1,4 +1,6 @@
 ﻿using Google.Cloud.Firestore;
+using OnlineStore.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace OnlineStore.Models;
 
@@ -21,5 +23,12 @@ public class ClientOrder
     public DateTime OrderDate { get; set; } = DateTime.UtcNow;
 
     [FirestoreProperty]
-    public string Status { get; set; } // Ex: Pendente, Enviado, Entregue
+    [Required(ErrorMessage = "Status é obrigatória.")]
+    public string Status { get; set; }
+
+    public OrderStatus OrderStatusEnum
+    {
+        get => Enum.Parse<OrderStatus>(Status); // Converte string para enum ao acessar
+        set => Status = value.ToString(); // Converte enum para string ao definir
+    }
 }
