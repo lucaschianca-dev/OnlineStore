@@ -19,7 +19,7 @@ using OnlineStore.Services.UserService;
 var builder = WebApplication.CreateBuilder(args);
 
 // Definir a variável de ambiente para as credenciais do Google Firestore
-string path = "C:\\Users\\Lucas\\Desktop\\OnlineStore\\OnlineStore\\Secrets\\onlinestore-fde01-fb4da4a993da.json";
+string path = "C:\\Users\\Administrator\\Desktop\\projetos\\OnlineStore\\OnlineStore\\Secrets\\onlinestore-fde01-fb4da4a993da.json";
 Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", path);
 
 // Configurar o Swagger para aceitar JWT Bearer Token
@@ -95,7 +95,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<SendEmailService>();
 builder.Services.AddHttpClient<AuthService>();
-builder.Services.AddScoped<PendingUserCleanupService>();
+builder.Services.AddScoped<PendingUserService>();
 builder.Services.AddHostedService<PendingUserCleanupBackgroundService>();
 builder.Services.AddScoped<ClientOrderService>();
 
