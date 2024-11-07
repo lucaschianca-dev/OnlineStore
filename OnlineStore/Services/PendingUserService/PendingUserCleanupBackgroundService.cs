@@ -20,10 +20,10 @@ public class PendingUserCleanupBackgroundService : BackgroundService
         {
             using (var scope = _scopeFactory.CreateScope())
             {
-                var cleanupService = scope.ServiceProvider.GetRequiredService<PendingUserCleanupService>();
+                var pendingUserService = scope.ServiceProvider.GetRequiredService<PendingUserService>();
 
                 // Limpar usuários pendentes com mais de 7 dias
-                await cleanupService.CleanupOldPendingUsersAsync(7);
+                await pendingUserService.DeleteOldPendingUsersAsync(7);
             }
 
             // Aguardar um intervalo antes de executar novamente (e.g., 24 horas)
