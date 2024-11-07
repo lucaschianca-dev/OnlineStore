@@ -47,5 +47,20 @@ namespace OnlineStore.Repositories.PendingUserRepository
 
             return pendingUsers;
         }
+
+        public async Task<List<PendingUser>> GetAllPendingUsersAsync()
+        {
+            CollectionReference pendingUsersRef = _firestoreDb.Collection("PendingUsers");
+            Query query = pendingUsersRef;
+            QuerySnapshot snapshot = await query.GetSnapshotAsync();
+
+            List<PendingUser> pendingUsers = new List<PendingUser>();
+            foreach (DocumentSnapshot document in snapshot.Documents)
+            {
+                pendingUsers.Add(document.ConvertTo<PendingUser>());
+            }
+
+            return pendingUsers;
+        }
     }
 }
